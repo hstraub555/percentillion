@@ -506,7 +506,7 @@
     soundLightning.volume = 0.7;
     soundTrumpet.volume = 0.65;
 
-    // Start music immediately upon entering website (with fallback click-to-play listener for browser blocks)
+    // Check if the user already completed today's challenge on load
     window.addEventListener('load', () => {
         bgMusic.play().catch(() => {
             const unlockAudio = () => {
@@ -517,6 +517,36 @@
             window.addEventListener('click', unlockAudio);
             window.addEventListener('keydown', unlockAudio);
         });
+
+        // Daily Play Verification Check via LocalStorage
+        const todayStr = new Date().toISOString().split('T')[0];
+        const savedDate = localStorage.getItem('percentillion_date');
+
+        if (savedDate === todayStr) {
+            // Already played today! Load results directly.
+            totalScore = parseInt(localStorage.getItem('percentillion_score')) || 0;
+            currentHeight = parseInt(localStorage.getItem('percentillion_height')) || 0;
+            const savedHistory = JSON.parse(localStorage.getItem('percentillion_history')) || [];
+            history = savedHistory;
+            let finalPercentile = parseInt(localStorage.getItem('percentillion_percentile')) || 50;
+
+            readyScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            gameContainer.style.backgroundColor = '#1e293b'; 
+            gameContainer.style.boxShadow = `0 10px 25px rgba(0,0,0,0.8)`;
+            
+            document.getElementById('final-score').innerText = totalScore;
+            document.getElementById('final-height').innerText = currentHeight;
+            reviewList.innerHTML = history.join('');
+            finalPercentileDisplay.innerText = finalPercentile;
+            
+            setTimeout(() => { userMarker.style.left = `${finalPercentile}%`; }, 100);
+
+            const signOffBox = resultScreen.querySelector('.sign-off-box');
+            if (signOffBox) {
+                signOffBox.innerHTML = "You have already completed today's Percentillion! Come back tomorrow for a new set of questions.";
+            }
+        }
     });
 
     sprite.src = 'climber_stand.png';
@@ -619,7 +649,6 @@
         } else if (diff >= 11 && diff <= 20) {
             colorClass = 'color-yellow';
             glowColor = 'rgba(250, 204, 21, 0.9)';
-            // Play clap twice in succession
             soundClap.currentTime = 0;
             soundClap.play().catch(e => {});
             setTimeout(() => {
@@ -717,6 +746,14 @@
         finalPercentileDisplay.innerText = finalPercentile;
         
         setTimeout(() => { userMarker.style.left = `${finalPercentile}%`; }, 100);
+
+        // Save daily completion to localStorage so returning users bypass the game
+        const todayStr = new Date().toISOString().split('T')[0];
+        localStorage.setItem('percentillion_date', todayStr);
+        localStorage.setItem('percentillion_score', totalScore);
+        localStorage.setItem('percentillion_height', currentHeight);
+        localStorage.setItem('percentillion_history', JSON.stringify(history));
+        localStorage.setItem('percentillion_percentile', finalPercentile);
     }
 </script>
 
