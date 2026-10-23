@@ -438,7 +438,8 @@
 
         <!-- Centered Instructions Text -->
         <div style="font-size: 0.8rem; color: #94a3b8; text-align: center; margin-top: 5px; line-height: 1.3;">
-            Refresh the page if the questions appear the same as yesterday's Percentillion.
+            Refresh the page if the questions appear the same as yesterday's Percentillion.<br>
+            This website does not collect cookies or store local data.
         </div>
 
         <script>
@@ -497,7 +498,7 @@
         <div id="ui-top" class="ui-layer">
             <div class="header-stats">
                 <span id="q-counter">Q: 1/8</span>
-                <span id="score-display">Score: 0</span>
+                <span id="height-display">Height: 0 ft</span>
                 <span id="timer-display">Time: 20s</span>
             </div>
             <div id="question-text">Loading question...</div>
@@ -529,7 +530,6 @@
             You performed better than <span id="final-percentile-display" style="color: #4ade80; font-weight: bold;">0</span>% of total users for the day.
         </div>
 
-        <p style="margin: 5px 0;">Total Score: <span id="final-score" style="font-size: 1.5rem; color: #38bdf8; font-weight: bold;">0</span> / 8000</p>
         <p style="margin: 5px 0;">Maximum Height: <span id="final-height" style="color: #4ade80; font-weight: bold;">0</span> feet</p>
         
         <div id="review-list" style="text-align: left; font-size: 0.85rem; color: #cbd5e1; max-height: 150px; overflow-y: auto; margin-top: 15px; border-top: 1px solid #334155; padding-top: 10px;"></div>
@@ -591,7 +591,7 @@
     const skyStages = ['#7dd3fc', '#38bdf8', '#475569', '#1e293b', '#000000'];
 
     let currentQ = 0;
-    let totalScore = 0;
+    let totalScore = 0; // Kept internally for exact backend calculations & percentile curve
     let currentHeight = 0; 
     let bgOffsetY = 0; 
     let currentQuestionData = {};
@@ -610,7 +610,7 @@
     const questionText = document.getElementById('question-text');
     const feedbackArea = document.getElementById('feedback-area');
     const qCounter = document.getElementById('q-counter');
-    const scoreDisplay = document.getElementById('score-display');
+    const heightDisplay = document.getElementById('height-display');
     const timerDisplay = document.getElementById('timer-display');
     const submitBtn = document.getElementById('submit-btn');
     const reviewList = document.getElementById('review-list');
@@ -928,11 +928,11 @@
         let rawScore = 1000 * Math.exp(-0.035 * diff);
         let pointsEarned = Math.round(rawScore);
         totalScore += pointsEarned;
-        scoreDisplay.innerText = `Score: ${totalScore}`;
         
         let rawHeight = 100 * Math.exp(-0.03 * diff);
         let feetClimbed = Math.max(10, Math.round(rawHeight));
         currentHeight += feetClimbed;
+        heightDisplay.innerText = `Height: ${currentHeight} ft`;
         
         let currentStage = Math.min(4, Math.floor(currentHeight / 125));
         gameContainer.style.backgroundColor = skyStages[currentStage];
@@ -954,7 +954,7 @@
         }
 
         guessValue.innerHTML = `<span style="font-size: 1.3rem; color: #94a3b8;">Guessed: ${guess}%</span><br><span class="${actualSpanClass}">Actual: ${actual}%</span>`;
-        feedbackArea.innerHTML = `<span>${!isManual ? 'Time expired! Auto-locked. ' : ''}Off by ${diff}% <br><strong>+${pointsEarned} pts | Climbed ${feetClimbed} feet</strong></span>`;
+        feedbackArea.innerHTML = `<span>${!isManual ? 'Time expired! Auto-locked. ' : ''}Off by ${diff}% <br><strong>Climbed ${feetClimbed} feet</strong></span>`;
         history.push(`<p><strong>Q${currentQ + 1}:</strong> Actual ${actual}% | Guessed ${guess}% <span class="${colorClass}">(+${feetClimbed} ft)</span></p>`);
         
         setTimeout(() => {
@@ -971,7 +971,6 @@
         gameContainer.style.backgroundColor = '#1e293b'; 
         gameContainer.style.boxShadow = `0 10px 25px rgba(0,0,0,0.8)`;
         
-        document.getElementById('final-score').innerText = totalScore;
         document.getElementById('final-height').innerText = currentHeight;
         reviewList.innerHTML = history.join('');
 
