@@ -224,6 +224,21 @@
             animation: flashBannerYellow 2s ease-in-out forwards; pointer-events: none; white-space: nowrap;
         }
 
+        @keyframes flashBannerOrange {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            20% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+            40% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            80% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
+        }
+        #alittleoff-banner {
+            position: absolute; top: 40%; left: 57%; transform: translate(-50%, -50%);
+            background: rgba(15, 23, 42, 0.95); border: 3px solid #fb923c; color: #fb923c;
+            padding: 12px 24px; font-size: 1.5rem; font-weight: 900; letter-spacing: 2px;
+            border-radius: 12px; box-shadow: 0 0 30px #fb923c; z-index: 100;
+            animation: flashBannerOrange 2.5s ease-in-out forwards; pointer-events: none; white-space: nowrap;
+        }
+
         /* Screen Flashes */
         #screen-flash {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
@@ -263,6 +278,17 @@
         .floating-thumbs {
             position: absolute; width: 35px; height: auto; z-index: 115; pointer-events: none;
             animation: floatUpWave 2.5s ease-in-out forwards;
+        }
+
+        /* Sliding Climber Animation (45-degree angle from top-left) */
+        @keyframes slideIn45 {
+            0% { transform: translate(-200px, -200px); opacity: 0; }
+            60% { opacity: 1; }
+            100% { transform: translate(0px, 0px); opacity: 1; }
+        }
+        .sliding-climber {
+            position: absolute; left: 30px; top: 40%; width: 140px; height: auto; z-index: 115; pointer-events: none;
+            animation: slideIn45 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
         .confetti {
@@ -808,25 +834,21 @@
 
         // Custom Yellow Answer Animation Sequence (diff 11-20 and manual guess)
         if (diff >= 11 && diff <= 20 && isManual) {
-            // Show "So Close!" Banner for 2.5s
             const soCloseBanner = document.createElement('div');
             soCloseBanner.id = 'soclose-banner';
             soCloseBanner.innerText = 'So Close!';
             activeScreen.appendChild(soCloseBanner);
 
-            // Spawn floating thumbs_up icons following a sine wave path
             for (let i = 0; i < 15; i++) {
                 setTimeout(() => {
                     const thumb = document.createElement('img');
                     thumb.src = 'thumbs_up.png';
                     thumb.className = 'floating-thumbs';
                     
-                    // Random horizontal start position across the container
                     const startX = 50 + Math.random() * 350;
                     thumb.style.left = startX + 'px';
                     thumb.style.bottom = '20px';
 
-                    // Random wave amplitude offset
                     const waveX = (Math.random() - 0.5) * 120 + 'px';
                     thumb.style.setProperty('--wave-x', waveX);
 
@@ -837,6 +859,25 @@
 
             setTimeout(() => {
                 soCloseBanner.remove();
+            }, 2500);
+        }
+
+        // Custom Orange Answer Animation Sequence (diff 21-30 and manual guess)
+        if (diff >= 21 && diff <= 30 && isManual) {
+            const aLittleOffBanner = document.createElement('div');
+            aLittleOffBanner.id = 'alittleoff-banner';
+            aLittleOffBanner.innerText = 'A Little Off...';
+            activeScreen.appendChild(aLittleOffBanner);
+
+            const slidingClimber = document.createElement('img');
+            slidingClimber.src = 'climber_blank.png';
+            slidingClimber.className = 'sliding-climber';
+            activeScreen.appendChild(slidingClimber);
+
+            // Total 2.5s duration: 1.5s sliding + 1.0s resting
+            setTimeout(() => {
+                slidingClimber.remove();
+                aLittleOffBanner.remove();
             }, 2500);
         }
 
