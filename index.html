@@ -1,0 +1,665 @@
+<!-- Visit Line 360 to change sets -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Percentillion - Stationary Stars & Drifting Clouds</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #0f172a; 
+            color: #f8fafc; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            overflow: hidden;
+        }
+        #game-container { 
+            background-color: #7dd3fc; 
+            padding: 0; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8); 
+            width: 90%; 
+            max-width: 500px; 
+            text-align: center; 
+            position: relative;
+            overflow: hidden;
+            min-height: 650px;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 4s ease-in-out, box-shadow 0.5s ease-in-out; 
+        }
+        
+        #skyscraper-bg {
+            position: absolute;
+            top: 0; left: 12%; right: 12%; bottom: 0;
+            background-color: #475569;
+            background-image: 
+                radial-gradient(circle at 20% 15%, rgba(100, 116, 139, 0.6) 0%, transparent 20%),
+                radial-gradient(circle at 75% 30%, rgba(51, 65, 85, 0.7) 0%, transparent 25%),
+                radial-gradient(circle at 40% 60%, rgba(100, 116, 139, 0.5) 0%, transparent 30%),
+                radial-gradient(circle at 80% 80%, rgba(71, 85, 105, 0.8) 0%, transparent 20%),
+                radial-gradient(circle at 15% 90%, rgba(51, 65, 85, 0.6) 0%, transparent 25%),
+                linear-gradient(135deg, rgba(255,255,255,0) 35%, rgba(255,255,255,0.25) 45%, rgba(255,255,255,0) 55%), 
+                linear-gradient(to bottom, #1e293b 6px, transparent 6px), 
+                linear-gradient(to right, #1e293b 6px, transparent 6px); 
+            background-size: 150px 150px, 200px 200px, 180px 180px, 220px 220px, 160px 160px, 100% 100%, 100% 45px, 25% 100%;
+            z-index: 1;
+            border-left: 6px solid #1e293b;
+            border-right: 6px solid #1e293b;
+            background-position: 0px 0px;
+            transition: background-position 4s ease-in-out;
+        }
+
+        #ground {
+            position: absolute;
+            top: 50%; 
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #166534; 
+            border-top: 15px solid #22c55e; 
+            z-index: 4;
+            transition: transform 4s ease-in-out;
+            background-image: 
+                linear-gradient(135deg, #22c55e 25%, transparent 25%), 
+                linear-gradient(225deg, #22c55e 25%, transparent 25%),
+                linear-gradient(45deg, #22c55e 25%, transparent 25%), 
+                linear-gradient(315deg, #22c55e 25%, transparent 25%);
+            background-position: 0 0, 0 0, 10px 0, 10px 0;
+            background-size: 20px 12px;
+            background-repeat: repeat-x;
+        }
+
+        #celestial-container {
+            position: absolute;
+            top: 50%; left: 0; width: 100%; height: 0;
+            z-index: 3; transition: transform 4s ease-in-out; pointer-events: none;
+        }
+        .celestial-body {
+            position: absolute; font-size: 3.5rem; filter: drop-shadow(0 0 15px rgba(255,255,255,0.6));
+        }
+        #moon { top: -3000px; left: 15%; font-size: 4.5rem; }     
+        #mars { top: -4200px; left: 75%; font-size: 2.5rem; }     
+        #saturn { top: -5800px; left: 20%; font-size: 3rem; }   
+        #jupiter { top: -7500px; left: 70%; font-size: 3.8rem; }  
+
+        #stars-container {
+            position: absolute; top: 50%; left: 0; width: 100%; height: 0; z-index: 0; transition: transform 4s ease-in-out;
+        }
+        .stars {
+            position: absolute; bottom: 3500px; left: 0; width: 100%; height: 8000px; 
+            background-image: 
+                radial-gradient(3.5px 3.5px at 10% 10%, #ffffff, transparent),
+                radial-gradient(4px 4px at 25% 35%, #ffffff, transparent),
+                radial-gradient(4.5px 4.5px at 45% 65%, #ffffff, transparent),
+                radial-gradient(3.5px 3.5px at 65% 15%, #ffffff, transparent),
+                radial-gradient(4px 4px at 85% 85%, #ffffff, transparent),
+                radial-gradient(4.5px 4.5px at 90% 45%, #ffffff, transparent),
+                radial-gradient(3.5px 3.5px at 35% 90%, #ffffff, transparent),
+                radial-gradient(4px 4px at 75% 55%, #ffffff, transparent),
+                radial-gradient(3px 3px at 50% 25%, #ffffff, transparent),
+                radial-gradient(3px 3px at 15% 75%, #ffffff, transparent),
+                radial-gradient(3px 3px at 80% 30%, #ffffff, transparent),
+                radial-gradient(4.5px 4.5px at 5% 50%, #ffffff, transparent),
+                radial-gradient(3.5px 3.5px at 55% 5%, #ffffff, transparent);
+            background-size: 250px 250px; opacity: 0.9;
+        }
+
+        @keyframes cloudDrift {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(-8px, -5px) scale(1.02); }
+            66% { transform: translate(8px, 6px) scale(0.98); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        #clouds-container {
+            position: absolute; top: 50%; left: 0; width: 100%; height: 0; z-index: 5; transition: transform 4s ease-in-out;
+        }
+        .cloud {
+            position: absolute; font-size: 5rem; opacity: 0.9; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3));
+            animation: cloudDrift 9s infinite ease-in-out;
+        }
+        .cloud:nth-child(1) { top: -200px; left: -10%; font-size: 6rem; animation-duration: 8s; }
+        .cloud:nth-child(2) { top: -400px; left: 60%; font-size: 4rem; animation-duration: 11s; }
+        .cloud:nth-child(3) { top: -600px; left: 15%; font-size: 5rem; animation-duration: 9.5s; }
+        .cloud:nth-child(4) { top: -800px; left: 75%; font-size: 6.5rem; animation-duration: 10s; }
+        .cloud:nth-child(5) { top: -1000px; left: -5%; font-size: 4.5rem; animation-duration: 7.5s; }
+        .cloud:nth-child(6) { top: -1200px; left: 50%; font-size: 7rem; animation-duration: 12s; }
+        .cloud:nth-child(7) { top: -1500px; left: 20%; font-size: 5.5rem; animation-duration: 8.5s; }
+        .cloud:nth-child(8) { top: -1700px; left: 80%; font-size: 4rem; animation-duration: 10.5s; }
+        .cloud:nth-child(9) { top: -1900px; left: 5%; font-size: 6rem; animation-duration: 9s; }
+        .cloud:nth-child(10) { top: -2200px; left: 65%; font-size: 5rem; animation-duration: 11.5s; }
+        .cloud:nth-child(11) { top: -2500px; left: -15%; font-size: 7.5rem; animation-duration: 8s; }
+        .cloud:nth-child(12) { top: -2700px; left: 55%; font-size: 4.5rem; animation-duration: 10s; }
+        .cloud:nth-child(13) { top: -2900px; left: 25%; font-size: 6rem; animation-duration: 9.5s; }
+        .cloud:nth-child(14) { top: -3200px; left: 85%; font-size: 5.5rem; animation-duration: 11s; }
+        .cloud:nth-child(15) { top: -3400px; left: 10%; font-size: 6.5rem; animation-duration: 8.5s; }
+
+        @keyframes standIdle {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+        }
+        @keyframes climbWobble {
+            0% { transform: translate(-50%, -50%) rotate(-15deg); }
+            50% { transform: translate(-50%, -50%) rotate(15deg) scale(1.1); }
+            100% { transform: translate(-50%, -50%) rotate(-15deg); }
+        }
+
+        @keyframes popAndGlow {
+            0% { transform: scale(1); text-shadow: 0 0 5px rgba(74, 222, 128, 0.2); }
+            50% { transform: scale(1.25); text-shadow: 0 0 20px #4ade80, 0 0 30px #4ade80; }
+            100% { transform: scale(1); text-shadow: 0 0 5px rgba(74, 222, 128, 0.2); }
+        }
+        .pop-effect { display: inline-block; animation: popAndGlow 1s ease-in-out; }
+
+        @keyframes shakeAndGlow {
+            0% { transform: translateX(0); text-shadow: 0 0 5px rgba(248, 113, 113, 0.2); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); text-shadow: 0 0 20px #f87171, 0 0 30px #f87171; }
+            60% { transform: translateX(-6px); }
+            80% { transform: translateX(6px); }
+            100% { transform: translateX(0); text-shadow: 0 0 5px rgba(248, 113, 113, 0.2); }
+        }
+        .shake-effect { display: inline-block; animation: shakeAndGlow 1s ease-in-out; }
+
+        @keyframes timerFlash {
+            0%, 100% { color: #f87171; }
+            50% { color: #94a3b8; }
+        }
+        .timer-warning { animation: timerFlash 0.6s infinite ease-in-out; }
+
+        @keyframes flashBanner {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            20% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+            40% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            80% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
+        }
+        #flash-banner {
+            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(15, 23, 42, 0.95); border: 3px solid #4ade80; color: #4ade80;
+            padding: 12px 24px; font-size: 1.5rem; font-weight: 900; letter-spacing: 2px;
+            border-radius: 12px; box-shadow: 0 0 30px #4ade80; z-index: 100;
+            animation: flashBanner 2s ease-in-out forwards; pointer-events: none; white-space: nowrap;
+        }
+
+        .confetti {
+            position: absolute; width: 10px; height: 10px; background-color: #4ade80;
+            z-index: 105; opacity: 1; pointer-events: none; animation: confettiFall 1.5s ease-out forwards;
+        }
+        @keyframes confettiFall {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) rotate(720deg) scale(0.5); opacity: 0; }
+        }
+
+        #sprite {
+            position: absolute; top: 50%; left: 50%; z-index: 10; transform: translate(-50%, -50%);
+            filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5)); width: 175px; height: auto;
+        }
+        .standing { animation: standIdle 2s infinite ease-in-out; }
+        .climbing-moving { animation: climbWobble 0.6s infinite ease-in-out; }
+        .climbing-idle { transform: translate(-50%, -50%) rotate(0deg); }
+
+        .ui-layer {
+            position: relative; z-index: 20; background: rgba(15, 23, 42, 0.65); 
+            backdrop-filter: blur(4px); margin: 20px; padding: 20px; border-radius: 12px;
+            border: 1px solid rgba(51, 65, 85, 0.5); text-shadow: 0px 1px 3px rgba(0,0,0,0.8);
+        }
+        #ui-bottom { margin-top: auto; }
+
+        h1 { 
+            color: #000000; background: rgba(255, 255, 255, 0.7); display: inline-block;
+            padding: 8px 20px; border-radius: 8px; margin: 20px auto 0 auto; z-index: 20; 
+            position: relative; text-transform: uppercase; letter-spacing: 2px;
+        }
+        h2 { color: #e2e8f0; margin-top: 0; }
+        
+        .header-stats { 
+            display: flex; justify-content: space-between; font-size: 1rem; color: #94a3b8; 
+            margin-bottom: 15px; border-bottom: 1px solid rgba(51, 65, 85, 0.6); padding-bottom: 10px;
+        }
+        #question-text { font-size: 1.2rem; min-height: 50px; margin: 0; }
+        
+        input[type=range] { 
+            width: 90%; margin: 15px 0; cursor: pointer; accent-color: #38bdf8;
+            filter: drop-shadow(0 0 2px rgba(0,0,0,1));
+        }
+        
+        #guess-value { 
+            font-size: 2.2rem; font-weight: bold; color: #38bdf8; margin-bottom: 5px; 
+            min-height: 48px; text-shadow: 0px 2px 4px rgba(0,0,0,1);
+        }
+        
+        button { 
+            background-color: #38bdf8; color: #0f172a; border: none; padding: 15px 30px; 
+            font-size: 1.2rem; border-radius: 8px; cursor: pointer; font-weight: bold; width: 90%;
+            transition: background-color 0.2s; margin-top: 10px; text-shadow: none;
+        }
+        button:hover { background-color: #7dd3fc; }
+        button:disabled { background-color: #475569; cursor: not-allowed; }
+        
+        #feedback-area { margin-top: 10px; font-size: 0.95rem; min-height: 40px; }
+
+        .screen-content { padding: 30px; position: relative; z-index: 20; background: #1e293b; flex-grow: 1; border-radius: 0 0 16px 16px;}
+        .hidden { display: none !important; }
+        
+        .color-green { color: #4ade80 !important; }
+        .color-yellow { color: #facc15 !important; }
+        .color-red { color: #f87171 !important; }
+
+        .bell-curve-wrapper {
+            position: relative; width: 100%; height: 100px; margin: 15px 0;
+            background: rgba(15, 23, 42, 0.4); border-radius: 8px; border: 1px solid rgba(51, 65, 85, 0.5);
+        }
+        .bell-curve-wrapper svg { width: 100%; height: 100%; overflow: visible; }
+        #user-marker {
+            position: absolute; top: -10px; bottom: 0; display: flex; flex-direction: column; 
+            align-items: center; transform: translateX(-50%); left: 50%; transition: left 1.5s ease-out;
+        }
+        .marker-label {
+            background-color: #4ade80; color: #0f172a; font-size: 0.75rem; font-weight: bold; 
+            padding: 2px 6px; border-radius: 4px; margin-bottom: 2px;
+        }
+        .marker-line { width: 2px; flex-grow: 1; background-color: #4ade80; }
+        .percentile-text { font-size: 1.05rem; color: #cbd5e1; margin: 5px 0 20px 0; line-height: 1.4; }
+
+        .sign-off-box {
+            background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(51, 65, 85, 0.5); 
+            border-radius: 8px; padding: 15px; margin-top: 15px; color: #94a3b8; font-weight: 500; font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Audio Elements -->
+<audio id="bg-music" src="bg_music.mp3" loop></audio>
+<audio id="sound-ding" src="ding.mp3"></audio>
+<audio id="sound-clap" src="clap.mp3"></audio>
+<audio id="sound-mumble" src="mumble.mp3"></audio>
+
+<div id="game-container">
+    <h1>Percentillion</h1>
+    
+    <div id="ready-screen" class="screen-content">
+        <h2>Ready to Climb?</h2>
+        <p style="color: #94a3b8; margin-bottom: 30px;">7 Questions + 1 Bonus. 15 Seconds each. Closer guesses to the real percentage scale the building faster.</p>
+            <button id="start-run-btn" style="width: 100%;">Begin Climb</button>
+            <!-- The ID "animated-climber" lets our script find this specific image -->
+    <img 
+        id="animated-climber"
+        src="climber_stand.png" 
+        alt="Climber Animation" 
+        style="width: 450px; height: auto; margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5)); transform: translateX(0px);"
+    >
+
+    <script>
+        // Wait until the page is fully loaded before starting the animation
+        window.addEventListener('load', function() {
+            const climberImg = document.getElementById('animated-climber');
+            let currentImage = 'stand'; // Keep track of which image is showing
+
+            setInterval(() => {
+            if (currentImage === 'stand') {
+                climberImg.src = 'climber_point.png';
+                climberImg.style.transform = 'translateX(-2px)'; // Shifts only the pointing pose left
+                currentImage = 'point';
+            } else {
+                climberImg.src = 'climber_stand.png';
+                climberImg.style.transform = 'translateX(0px)';  // Resets the standing pose to center
+                currentImage = 'stand';
+            }
+        }, 750);
+        });
+    </script>
+    </div>
+
+    <div id="active-screen" class="hidden" style="flex-grow: 1; display: flex; flex-direction: column;">
+        <div id="stars-container"><div class="stars"></div></div>
+        
+        <div id="celestial-container">
+            <div id="moon" class="celestial-body">🌔</div>
+            <div id="mars" class="celestial-body">🔴</div>
+            <div id="saturn" class="celestial-body">🪐</div>
+            <div id="jupiter" class="celestial-body">🌕</div>
+        </div>
+
+        <div id="skyscraper-bg"></div>
+        <div id="ground"></div>
+
+        <div id="clouds-container">
+            <div class="cloud">☁️</div><div class="cloud">☁️</div><div class="cloud">☁️</div>
+            <div class="cloud">☁️</div><div class="cloud">☁️</div><div class="cloud">☁️</div>
+            <div class="cloud">☁️</div><div class="cloud">☁️</div><div class="cloud">☁️</div>
+            <div class="cloud">☁️</div><div class="cloud">☁️</div><div class="cloud">☁️</div>
+            <div class="cloud">☁️</div><div class="cloud">☁️</div><div class="cloud">☁️</div>
+        </div>
+        
+        <img id="sprite" class="standing" src="climber_stand.png" alt="Climber Standing">
+
+        <div id="ui-top" class="ui-layer">
+            <div class="header-stats">
+                <span id="q-counter">Q: 1/8</span>
+                <span id="score-display">Score: 0</span>
+                <span id="timer-display">Time: 15s</span>
+            </div>
+            <div id="question-text">Loading question...</div>
+        </div>
+        
+        <div id="ui-bottom" class="ui-layer">
+            <div id="guess-value">50%</div>
+            <input type="range" id="slider" min="0" max="100" value="50">
+            
+            <button id="submit-btn">Lock In Guess</button>
+            <div id="feedback-area"></div>
+        </div>
+    </div>
+
+    <div id="result-screen" class="screen-content hidden">
+        <h2>Climb Complete!</h2>
+        
+        <div class="bell-curve-wrapper">
+            <svg viewBox="0 0 100 50" preserveAspectRatio="none">
+                <path d="M 0 50 C 20 50 30 5 50 5 C 70 5 80 50 100 50 Z" fill="rgba(56, 189, 248, 0.2)" stroke="#38bdf8" stroke-width="1.5"></path>
+            </svg>
+            <div id="user-marker">
+                <div class="marker-label">You</div>
+                <div class="marker-line"></div>
+            </div>
+        </div>
+        
+        <div class="percentile-text">
+            You performed better than <span id="final-percentile-display" style="color: #4ade80; font-weight: bold;">0</span>% of total users for the day.
+        </div>
+
+        <p style="margin: 5px 0;">Total Score: <span id="final-score" style="font-size: 1.5rem; color: #38bdf8; font-weight: bold;">0</span> / 8000</p>
+        <p style="margin: 5px 0;">Maximum Height: <span id="final-height" style="color: #4ade80; font-weight: bold;">0</span> feet</p>
+        
+        <div id="review-list" style="text-align: left; font-size: 0.85rem; color: #cbd5e1; max-height: 150px; overflow-y: auto; margin-top: 15px; border-top: 1px solid #334155; padding-top: 10px;"></div>
+        
+        <div class="sign-off-box">
+            Come back tomorrow to see how you rank with a new set of questions!
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // VISIT LINE 360 TO CHANGE SETS
+    // ==========================================
+    const activeSet = 2;
+
+    const questionSets = {
+        1: {
+            difficultyCurve: 0.92,
+            questions: [
+                { text: "What percent of Earth's atmosphere is composed of nitrogen?", answer: 78 },
+                { text: "What percent of commercial aircraft fly at or above Mach 0.8 at cruising altitude?", answer: 85 },
+                { text: "What percentage of active satellites operate in Low Earth Orbit (LEO)?", answer: 60 },
+                { text: "What percent of an airliner's maximum takeoff weight is typically aviation fuel?", answer: 30 },
+                { text: "What percent of all global cargo, by volume, is transported by air?", answer: 1 },
+                { text: "What percentage of modern helicopters utilize a tail rotor configuration?", answer: 90 },
+                { text: "What percent of the world's freshwater is trapped in glaciers and ice caps?", answer: 68 }
+            ]
+        },
+        2: {
+            difficultyCurve: 0.96,
+            questions: [
+                { text: "What percentage of the human body's total weight is made up of water?", answer: 60 },
+                { text: "What percent of the Earth's total surface is covered by oceans?", answer: 71 },
+                { text: "What percent of all mammal species on Earth are bats?", answer: 20 },
+                { text: "What percentage of the global population is estimated to be left-handed?", answer: 10 },
+                { text: "What percent of our solar system's total mass is contained purely within the Sun?", answer: 99 },
+                { text: "What percent of a lightning bolt's total energy is converted into visible light?", answer: 1 },
+                { text: "What percent of dictionary words in English are estimated to come from French origins?", answer: 30 }
+            ]
+        }
+    };
+
+    const currentSetData = questionSets[activeSet] || questionSets[1];
+    const baseQuestions = currentSetData.questions;
+
+    const skyStages = ['#7dd3fc', '#38bdf8', '#475569', '#1e293b', '#000000'];
+
+    let currentQ = 0;
+    let totalScore = 0;
+    let currentHeight = 0; 
+    let bgOffsetY = 0; 
+    let currentQuestionData = {};
+    
+    let timeLeft = 15;
+    let timerInterval;
+    let roundActive = true;
+    let history = [];
+
+    const readyScreen = document.getElementById('ready-screen');
+    const activeScreen = document.getElementById('active-screen');
+    const resultScreen = document.getElementById('result-screen');
+    
+    const slider = document.getElementById('slider');
+    const guessValue = document.getElementById('guess-value');
+    const questionText = document.getElementById('question-text');
+    const feedbackArea = document.getElementById('feedback-area');
+    const qCounter = document.getElementById('q-counter');
+    const scoreDisplay = document.getElementById('score-display');
+    const timerDisplay = document.getElementById('timer-display');
+    const submitBtn = document.getElementById('submit-btn');
+    const reviewList = document.getElementById('review-list');
+    
+    const gameContainer = document.getElementById('game-container');
+    const skyscraperBg = document.getElementById('skyscraper-bg');
+    const groundLayer = document.getElementById('ground');
+    const cloudsContainer = document.getElementById('clouds-container');
+    const starsContainer = document.getElementById('stars-container');
+    const celestialContainer = document.getElementById('celestial-container');
+    const sprite = document.getElementById('sprite');
+    const userMarker = document.getElementById('user-marker');
+    const finalPercentileDisplay = document.getElementById('final-percentile-display');
+
+    // Sound elements
+    const bgMusic = document.getElementById('bg-music');
+    const soundDing = document.getElementById('sound-ding');
+    const soundClap = document.getElementById('sound-clap');
+    const soundMumble = document.getElementById('sound-mumble');
+    bgMusic.volume = 0.4;
+    soundClap.volume = 0.65;      // Clap set to 65% volume
+    soundMumble.volume = 0.65;    // Mumble set to 65% volume
+
+    // Start music immediately upon entering website (with fallback click-to-play listener for browser blocks)
+    window.addEventListener('load', () => {
+        bgMusic.play().catch(() => {
+            const unlockAudio = () => {
+                bgMusic.play().catch(e => {});
+                window.removeEventListener('click', unlockAudio);
+                window.removeEventListener('keydown', unlockAudio);
+            };
+            window.addEventListener('click', unlockAudio);
+            window.addEventListener('keydown', unlockAudio);
+        });
+    });
+
+    sprite.src = 'climber_stand.png';
+    sprite.className = 'standing';
+
+    document.getElementById('start-run-btn').addEventListener('click', () => {
+        readyScreen.classList.add('hidden');
+        activeScreen.classList.remove('hidden');
+        sprite.src = 'climber_stand.png';
+        sprite.className = 'standing';
+        startQuestion();
+    });
+
+    submitBtn.addEventListener('click', () => {
+        if (roundActive) submitGuess();
+        else nextQuestion();
+    });
+
+    slider.addEventListener('input', (e) => {
+        if(roundActive) guessValue.innerHTML = e.target.value + '%';
+    });
+
+    function nextQuestion() {
+        if (currentQ >= 7) {
+            endGame();
+        } else {
+            currentQ++;
+            startQuestion();
+        }
+    }
+
+    function startQuestion() {
+        if (currentQ === 7) {
+            let runningPercentile = Math.max(1, Math.min(99, Math.round((totalScore / 7000) * 100)));
+            currentQuestionData = {
+                text: "Compared to all users, how do you think you have performed globally thus far in the Percentillion?",
+                answer: runningPercentile
+            };
+        } else {
+            currentQuestionData = baseQuestions[currentQ];
+        }
+        
+        roundActive = true;
+        timeLeft = 15;
+        slider.value = 50;
+        guessValue.innerHTML = '50%';
+        slider.disabled = false;
+        submitBtn.innerText = "Lock In Guess";
+        submitBtn.disabled = false;
+        feedbackArea.innerHTML = "";
+        
+        qCounter.innerText = `Q: ${currentQ + 1}/8`;
+        questionText.innerText = currentQuestionData.text;
+        timerDisplay.innerText = `Time: ${timeLeft}s`;
+        timerDisplay.classList.remove('timer-warning');
+        
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timerDisplay.innerText = `Time: ${timeLeft}s`;
+            
+            if (timeLeft <= 8 && timeLeft > 0) {
+                timerDisplay.classList.add('timer-warning');
+            }
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timerDisplay.classList.remove('timer-warning');
+                submitGuess(false); 
+            }
+        }, 1000);
+    }
+
+    function submitGuess(isManual = true) {
+        clearInterval(timerInterval);
+        timerDisplay.classList.remove('timer-warning');
+        roundActive = false;
+        slider.disabled = true;
+        submitBtn.disabled = true; 
+        
+        sprite.src = 'climber.png';
+        sprite.className = 'climbing-moving';
+        
+        const guess = parseInt(slider.value);
+        const actual = currentQuestionData.answer;
+        const diff = Math.abs(actual - guess);
+        
+        let colorClass = 'color-green';
+        let glowColor = 'rgba(74, 222, 128, 0.9)';
+
+        if (diff >= 26) {
+            colorClass = 'color-red';
+            glowColor = 'rgba(248, 113, 113, 0.9)';
+            soundMumble.play().catch(e => {});
+        } else if (diff >= 11) {
+            colorClass = 'color-yellow';
+            glowColor = 'rgba(250, 204, 21, 0.9)';
+            soundClap.play().catch(e => {});
+        } else {
+            soundDing.play().catch(e => {});
+        }
+
+        gameContainer.style.boxShadow = `0 0 50px 10px ${glowColor}, 0 10px 25px rgba(0,0,0,0.8)`;
+
+        if (diff === 0 && isManual) {
+            const flashBanner = document.createElement('div');
+            flashBanner.id = 'flash-banner';
+            flashBanner.innerText = 'PERCENTILLION!';
+            activeScreen.appendChild(flashBanner);
+            setTimeout(() => { flashBanner.remove(); }, 2000);
+
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                const colors = ['#4ade80', '#38bdf8', '#facc15', '#f87171', '#c084fc', '#ffffff'];
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = '50%';
+                confetti.style.top = '40%';
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 100 + Math.random() * 200;
+                confetti.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+                confetti.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+                activeScreen.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 1500);
+            }
+        }
+
+        let rawScore = 1000 * Math.exp(-0.035 * diff);
+        let pointsEarned = Math.round(rawScore);
+        totalScore += pointsEarned;
+        scoreDisplay.innerText = `Score: ${totalScore}`;
+        
+        let rawHeight = 100 * Math.exp(-0.03 * diff);
+        let feetClimbed = Math.max(10, Math.round(rawHeight));
+        currentHeight += feetClimbed;
+        
+        let currentStage = Math.min(4, Math.floor(currentHeight / 125));
+        gameContainer.style.backgroundColor = skyStages[currentStage];
+        
+        bgOffsetY += (feetClimbed * 10);
+        skyscraperBg.style.backgroundPosition = `0px ${bgOffsetY}px`;
+        groundLayer.style.transform = `translateY(${bgOffsetY}px)`;
+        cloudsContainer.style.transform = `translateY(${bgOffsetY}px)`;
+        starsContainer.style.transform = `translateY(${bgOffsetY}px)`;
+        celestialContainer.style.transform = `translateY(${bgOffsetY}px)`;
+        
+        let actualSpanClass = colorClass;
+        if (diff <= 10 && isManual) {
+            actualSpanClass += ' pop-effect';
+        } else if (diff >= 26) {
+            actualSpanClass += ' shake-effect';
+        }
+
+        guessValue.innerHTML = `<span style="font-size: 1.3rem; color: #94a3b8;">Guessed: ${guess}%</span><br><span class="${actualSpanClass}">Actual: ${actual}%</span>`;
+        feedbackArea.innerHTML = `<span>${!isManual ? 'Time expired! Auto-locked. ' : ''}Off by ${diff}% <br><strong>+${pointsEarned} pts | Climbed ${feetClimbed} feet</strong></span>`;
+        history.push(`<p><strong>Q${currentQ + 1}:</strong> Actual ${actual}% | Guessed ${guess}% <span class="${colorClass}">(+${feetClimbed} ft)</span></p>`);
+        
+        setTimeout(() => {
+            sprite.className = 'climbing-idle';
+            gameContainer.style.boxShadow = `0 10px 25px rgba(0,0,0,0.8)`;
+            submitBtn.innerText = currentQ === 7 ? "Review Answers" : "Next Question";
+            submitBtn.disabled = false;
+        }, 4000); 
+    }
+
+    function endGame() {
+        activeScreen.classList.add('hidden');
+        resultScreen.classList.remove('hidden');
+        gameContainer.style.backgroundColor = '#1e293b'; 
+        gameContainer.style.boxShadow = `0 10px 25px rgba(0,0,0,0.8)`;
+        
+        document.getElementById('final-score').innerText = totalScore;
+        document.getElementById('final-height').innerText = currentHeight;
+        reviewList.innerHTML = history.join('');
+
+        let finalPercentile = Math.max(1, Math.min(99, Math.round((totalScore / 8000) * 100 * currentSetData.difficultyCurve)));
+        finalPercentileDisplay.innerText = finalPercentile;
+        
+        setTimeout(() => { userMarker.style.left = `${finalPercentile}%`; }, 100);
+    }
+</script>
+
+</body>
+</html>
