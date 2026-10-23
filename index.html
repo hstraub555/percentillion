@@ -209,6 +209,21 @@
             animation: flashBannerGreen 2s ease-in-out forwards; pointer-events: none; white-space: nowrap;
         }
 
+        @keyframes flashBannerYellow {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            20% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+            40% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            80% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
+        }
+        #soclose-banner {
+            position: absolute; top: 40%; left: 57%; transform: translate(-50%, -50%);
+            background: rgba(15, 23, 42, 0.95); border: 3px solid #facc15; color: #facc15;
+            padding: 12px 24px; font-size: 1.5rem; font-weight: 900; letter-spacing: 2px;
+            border-radius: 12px; box-shadow: 0 0 30px #facc15; z-index: 100;
+            animation: flashBannerYellow 2s ease-in-out forwards; pointer-events: none; white-space: nowrap;
+        }
+
         /* Screen Flashes */
         #screen-flash {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
@@ -236,6 +251,18 @@
         }
         .reticle-anim {
             animation: reticlePath 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        /* Floating Thumbs Up Wave Animation */
+        @keyframes floatUpWave {
+            0% { transform: translate(0px, 0px) scale(0.6); opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translate(var(--wave-x), -550px) scale(1.2); opacity: 0; }
+        }
+        .floating-thumbs {
+            position: absolute; width: 35px; height: auto; z-index: 115; pointer-events: none;
+            animation: floatUpWave 2.5s ease-in-out forwards;
         }
 
         .confetti {
@@ -408,7 +435,7 @@
         <!-- Percentillion Animation Image Element -->
         <img id="percentillion-anim-img" class="hidden" src="percentillion_ready.png" alt="Percentillion Anim" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 182px; height: auto; z-index: 110; opacity: 0; transition: opacity 1s ease-in-out;">
 
-        <!-- Green Answer Animation Elements (Target & Reticle container centered on the left) -->
+        <!-- Green Answer Animation Elements -->
         <div id="target-container" class="hidden" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); width: 140px; height: 140px; z-index: 115; pointer-events: none;">
             <img id="target-img" src="target.png" alt="Target" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%;">
             <img id="reticle-img" src="reticle.png" alt="Reticle" class="hidden" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%;">
@@ -757,13 +784,11 @@
                 reticleImg.classList.add('reticle-anim');
             }, 50);
 
-            // At 1.5s, reticle lands on target: screen flashes yellow (.2s), target switches to target_arrow, show Dead Accurate! banner
             setTimeout(() => {
                 screenFlash.classList.add('flashing-yellow');
                 reticleImg.classList.add('hidden');
                 targetImg.src = 'target_arrow.png';
 
-                // Show Dead Accurate! Banner
                 const accurateBanner = document.createElement('div');
                 accurateBanner.id = 'accurate-banner';
                 accurateBanner.innerText = 'Dead Accurate!';
@@ -773,13 +798,46 @@
                     screenFlash.classList.remove('flashing-yellow');
                 }, 200);
 
-                // Remains for 1 second, then disappears
                 setTimeout(() => {
                     targetContainer.classList.add('hidden');
                     accurateBanner.remove();
                 }, 1000);
 
             }, 1550);
+        }
+
+        // Custom Yellow Answer Animation Sequence (diff 11-20 and manual guess)
+        if (diff >= 11 && diff <= 20 && isManual) {
+            // Show "So Close!" Banner for 2.5s
+            const soCloseBanner = document.createElement('div');
+            soCloseBanner.id = 'soclose-banner';
+            soCloseBanner.innerText = 'So Close!';
+            activeScreen.appendChild(soCloseBanner);
+
+            // Spawn floating thumbs_up icons following a sine wave path
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const thumb = document.createElement('img');
+                    thumb.src = 'thumbs_up.png';
+                    thumb.className = 'floating-thumbs';
+                    
+                    // Random horizontal start position across the container
+                    const startX = 50 + Math.random() * 350;
+                    thumb.style.left = startX + 'px';
+                    thumb.style.bottom = '20px';
+
+                    // Random wave amplitude offset
+                    const waveX = (Math.random() - 0.5) * 120 + 'px';
+                    thumb.style.setProperty('--wave-x', waveX);
+
+                    activeScreen.appendChild(thumb);
+                    setTimeout(() => thumb.remove(), 2500);
+                }, i * 120);
+            }
+
+            setTimeout(() => {
+                soCloseBanner.remove();
+            }, 2500);
         }
 
         let rawScore = 1000 * Math.exp(-0.035 * diff);
