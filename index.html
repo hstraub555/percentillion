@@ -149,12 +149,19 @@
             100% { transform: translate(-50%, -50%) rotate(-15deg); }
         }
 
-        @keyframes popAndGlow {
+        @keyframes popAndGlowBlue {
+            0% { transform: scale(1); text-shadow: 0 0 5px rgba(56, 189, 248, 0.2); }
+            50% { transform: scale(1.25); text-shadow: 0 0 20px #38bdf8, 0 0 30px #38bdf8; }
+            100% { transform: scale(1); text-shadow: 0 0 5px rgba(56, 189, 248, 0.2); }
+        }
+        .pop-effect-blue { display: inline-block; animation: popAndGlowBlue 1s ease-in-out; }
+
+        @keyframes popAndGlowGreen {
             0% { transform: scale(1); text-shadow: 0 0 5px rgba(74, 222, 128, 0.2); }
             50% { transform: scale(1.25); text-shadow: 0 0 20px #4ade80, 0 0 30px #4ade80; }
             100% { transform: scale(1); text-shadow: 0 0 5px rgba(74, 222, 128, 0.2); }
         }
-        .pop-effect { display: inline-block; animation: popAndGlow 1s ease-in-out; }
+        .pop-effect { display: inline-block; animation: popAndGlowGreen 1s ease-in-out; }
 
         @keyframes shakeAndGlow {
             0% { transform: translateX(0); text-shadow: 0 0 5px rgba(248, 113, 113, 0.2); }
@@ -172,7 +179,7 @@
         }
         .timer-warning { animation: timerFlash 0.6s infinite ease-in-out; }
 
-        @keyframes flashBanner {
+        @keyframes flashBannerBlue {
             0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
             20% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
             40% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
@@ -181,14 +188,14 @@
         }
         #flash-banner {
             position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(15, 23, 42, 0.95); border: 3px solid #4ade80; color: #4ade80;
+            background: rgba(15, 23, 42, 0.95); border: 3px solid #38bdf8; color: #38bdf8;
             padding: 12px 24px; font-size: 1.5rem; font-weight: 900; letter-spacing: 2px;
-            border-radius: 12px; box-shadow: 0 0 30px #4ade80; z-index: 100;
-            animation: flashBanner 2s ease-in-out forwards; pointer-events: none; white-space: nowrap;
+            border-radius: 12px; box-shadow: 0 0 30px #38bdf8; z-index: 100;
+            animation: flashBannerBlue 2s ease-in-out forwards; pointer-events: none; white-space: nowrap;
         }
 
         .confetti {
-            position: absolute; width: 10px; height: 10px; background-color: #4ade80;
+            position: absolute; width: 10px; height: 10px; background-color: #38bdf8;
             z-index: 105; opacity: 1; pointer-events: none; animation: confettiFall 1.5s ease-out forwards;
         }
         @keyframes confettiFall {
@@ -251,6 +258,7 @@
         .screen-content { padding: 30px; position: relative; z-index: 20; background: #1e293b; flex-grow: 1; border-radius: 0 0 16px 16px;}
         .hidden { display: none !important; }
         
+        .color-blue { color: #38bdf8 !important; }
         .color-green { color: #4ade80 !important; }
         .color-yellow { color: #facc15 !important; }
         .color-red { color: #f87171 !important; }
@@ -284,6 +292,7 @@
 <audio id="sound-ding" src="ding.mp3"></audio>
 <audio id="sound-clap" src="clap.mp3"></audio>
 <audio id="sound-mumble" src="mumble.mp3"></audio>
+<audio id="sound-lightning" src="lightning.mp3"></audio>
 
 <div id="game-container">
     <h1>Percentillion</h1>
@@ -485,9 +494,12 @@
     const soundDing = document.getElementById('sound-ding');
     const soundClap = document.getElementById('sound-clap');
     const soundMumble = document.getElementById('sound-mumble');
+    const soundLightning = document.getElementById('sound-lightning');
+
     bgMusic.volume = 0.4;
-    soundClap.volume = 0.65;      // Clap set to 65% volume
-    soundMumble.volume = 0.65;    // Mumble set to 65% volume
+    soundClap.volume = 0.65;      
+    soundMumble.volume = 0.65;    
+    soundLightning.volume = 0.7;
 
     // Start music immediately upon entering website (with fallback click-to-play listener for browser blocks)
     window.addEventListener('load', () => {
@@ -590,7 +602,11 @@
         let colorClass = 'color-green';
         let glowColor = 'rgba(74, 222, 128, 0.9)';
 
-        if (diff >= 26) {
+        if (diff === 0) {
+            colorClass = 'color-blue';
+            glowColor = 'rgba(56, 189, 248, 0.9)';
+            soundLightning.play().catch(e => {});
+        } else if (diff >= 26) {
             colorClass = 'color-red';
             glowColor = 'rgba(248, 113, 113, 0.9)';
             soundMumble.play().catch(e => {});
@@ -614,7 +630,7 @@
             for (let i = 0; i < 50; i++) {
                 const confetti = document.createElement('div');
                 confetti.className = 'confetti';
-                const colors = ['#4ade80', '#38bdf8', '#facc15', '#f87171', '#c084fc', '#ffffff'];
+                const colors = ['#38bdf8', '#7dd3fc', '#ffffff', '#bae6fd'];
                 confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 confetti.style.left = '50%';
                 confetti.style.top = '40%';
@@ -647,7 +663,9 @@
         celestialContainer.style.transform = `translateY(${bgOffsetY}px)`;
         
         let actualSpanClass = colorClass;
-        if (diff <= 10 && isManual) {
+        if (diff === 0 && isManual) {
+            actualSpanClass += ' pop-effect-blue';
+        } else if (diff <= 10 && isManual) {
             actualSpanClass += ' pop-effect';
         } else if (diff >= 26) {
             actualSpanClass += ' shake-effect';
