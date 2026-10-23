@@ -291,6 +291,7 @@
 <!-- Audio Elements -->
 <audio id="bg-music" src="bg_music.mp3" loop></audio>
 <audio id="sound-ding" src="ding.mp3"></audio>
+<audio id="sound-clap" src="clap.mp3"></audio>
 <audio id="sound-mumble" src="mumble.mp3"></audio>
 <audio id="sound-lightning" src="lightning.mp3"></audio>
 <audio id="sound-trumpet" src="trumpet.mp3"></audio>
@@ -493,12 +494,14 @@
     // Sound elements
     const bgMusic = document.getElementById('bg-music');
     const soundDing = document.getElementById('sound-ding');
+    const soundClap = document.getElementById('sound-clap');
     const soundMumble = document.getElementById('sound-mumble');
     const soundLightning = document.getElementById('sound-lightning');
     const soundTrumpet = document.getElementById('sound-trumpet');
 
     bgMusic.volume = 0.4;
     soundDing.volume = 0.65;      
+    soundClap.volume = 0.65;
     soundMumble.volume = 0.65;    
     soundLightning.volume = 0.7;
     soundTrumpet.volume = 0.65;
@@ -616,7 +619,7 @@
         } else if (diff >= 11 && diff <= 20) {
             colorClass = 'color-yellow';
             glowColor = 'rgba(250, 204, 21, 0.9)';
-            // Play ding twice in succession
+            // Play clap twice in succession
             soundClap.currentTime = 0;
             soundClap.play().catch(e => {});
             setTimeout(() => {
