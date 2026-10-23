@@ -318,6 +318,31 @@
             animation: fallStraightDown 1.5s linear forwards;
         }
 
+        /* Fun Fact Popup Box above Climber Sprite */
+        #fun-fact-box {
+            position: absolute;
+            top: calc(50% - 130px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.95);
+            border: 2px solid #38bdf8;
+            color: #f8fafc;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+            z-index: 115;
+            max-width: 280px;
+            text-align: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        #fun-fact-box.visible {
+            opacity: 1;
+        }
+
         .confetti {
             position: absolute; width: 10px; height: 10px; background-color: #38bdf8;
             z-index: 105; opacity: 1; pointer-events: none; animation: confettiFall 1.5s ease-out forwards;
@@ -439,7 +464,7 @@
         <!-- Centered Instructions Text -->
         <div style="font-size: 0.8rem; color: #94a3b8; text-align: center; margin-top: 5px; line-height: 1.3;">
             Refresh the page if the questions appear the same as yesterday's Percentillion.<br>
-            This website does not collect cookies or store local data.
+            We do not store or sell any of your data.
         </div>
 
         <script>
@@ -484,6 +509,9 @@
             <div class="cloud">☁️</div><div class="cloud">☁️</div><div class="cloud">☁️</div>
         </div>
         
+        <!-- Fun Fact Pop-up Above Climber -->
+        <div id="fun-fact-box"></div>
+
         <img id="sprite" class="standing" src="climber_stand.png" alt="Climber Standing">
         
         <!-- Percentillion Animation Image Element -->
@@ -585,13 +613,97 @@
         }
     };
 
+    // 80 Fun Facts strictly tailored so that each milestone [X] describes a real-world object exactly between [X-5] and [X+4] feet long/tall.
+    const funFacts = {
+        10: "A standard regulation basketball hoop is mounted exactly 10 feet off the ground.",
+        20: "A standard ocean shipping container is exactly 20 feet long.",
+        30: "An adult male killer whale (orca) can grow to be exactly 32 feet long.",
+        40: "A standard yellow American school bus is exactly 40 feet in length.",
+        50: "The famous white letters of the Hollywood Sign in California are exactly 45 feet tall.",
+        60: "A standard bowling lane measures exactly 60 feet from the foul line to the head pin.",
+        70: "A regulation professional cricket pitch measures exactly 66 feet in length.",
+        80: "A standard regulation tennis court is exactly 78 feet long.",
+        90: "The distance between the bases on a Major League Baseball field is exactly 90 feet.",
+        100: "A regulation NBA and NCAA basketball court is exactly 94 feet long.",
+        110: "The world's largest animal, the blue whale, can reach a maximum length of 110 feet.",
+        120: "The first successful powered flight by the Wright Brothers covered exactly 120 feet.",
+        130: "The Christ the Redeemer statue in Brazil (including its pedestal) stands exactly 130 feet tall.",
+        140: "The wingspan of a World War II B-29 Superfortress bomber was exactly 141 feet.",
+        150: "The Statue of Liberty, measured strictly from its base to the torch, stands exactly 151 feet tall.",
+        160: "The regulation width of an American football field is exactly 160 feet.",
+        170: "The massive Horseshoe Falls section of Niagara Falls has a vertical drop of exactly 167 feet.",
+        180: "The lower side of the Leaning Tower of Pisa stands at approximately 183 feet tall.",
+        190: "The massive wingspan of a US Air Force B-52 Stratofortress is exactly 185 feet.",
+        200: "The wingspan of the original Boeing 747-100 jumbo jet is exactly 195 feet.",
+        210: "The historic dome of the California State Capitol building reaches exactly 210 feet high.",
+        220: "The famous Golden Gate Bridge maintains a clearance above high water of exactly 220 feet.",
+        230: "The total length of a Boeing 747-400 commercial airliner is exactly 231 feet.",
+        240: "The wingspan of the massive Antonov An-124 cargo plane is exactly 240 feet.",
+        250: "The length of a modern Zeppelin NT airship is exactly 246 feet.",
+        260: "The wingspan of the Airbus A380 superjumbo jet is exactly 261 feet.",
+        270: "The architectural height of the Pennsylvania State Capitol building is exactly 272 feet.",
+        280: "The iconic stone towers of the Brooklyn Bridge rise exactly 276 feet above the East River.",
+        290: "The historic Flatiron Building in New York City stands exactly 285 feet tall.",
+        300: "An American football field measured from goal line to goal line (excluding end zones) is exactly 300 feet.",
+        310: "The Statue of Liberty, measured from the ground to the tip of the torch, is exactly 305 feet tall.",
+        320: "The wingspan of the Hughes H-4 Hercules 'Spruce Goose' is exactly 320 feet.",
+        330: "The total length of an Olympic 100-meter dash is exactly 328 feet.",
+        340: "The futuristic Atomium building in Brussels stands exactly 335 feet tall.",
+        350: "The length of the US Navy's Seawolf-class nuclear submarine is exactly 353 feet.",
+        360: "An entire American football field, including both 30-foot end zones, is exactly 360 feet long.",
+        370: "The historic St Paul's Cathedral in London stands at an architectural height of exactly 365 feet.",
+        380: "The tallest known living tree on Earth, a coast redwood named Hyperion, stands at roughly 380 feet.",
+        390: "The wingspan of the Stratolaunch, the largest aircraft by wingspan in the world, is exactly 385 feet.",
+        400: "The maximum allowed length for an international FIFA soccer pitch is 120 meters, or exactly 394 feet.",
+        410: "A US Navy Oliver Hazard Perry-class guided-missile frigate is exactly 408 feet long.",
+        420: "The Top Thrill Dragster roller coaster at Cedar Point stands exactly 420 feet tall.",
+        430: "The famous Kyoto Tower observation structure in Japan is exactly 430 feet tall.",
+        440: "The London Eye, one of the world's tallest observation wheels, reaches a height of 443 feet.",
+        450: "The Great Pyramid of Giza's current height, missing its original capstone, is approximately 448 feet.",
+        460: "The Kingda Ka roller coaster, the tallest in the world, stands at an astonishing 456 feet.",
+        470: "The historic Strasbourg Cathedral in France reaches an impressive peak height of exactly 466 feet.",
+        480: "The Great Pyramid of Giza's original height when it was completed was exactly 481 feet.",
+        490: "The length of a Royal Navy Vanguard-class nuclear submarine is exactly 491 feet.",
+        500: "The length of a modern Royal Navy Type 45 Daring-class destroyer is exactly 500 feet.",
+        510: "The length of a US Navy Arleigh Burke-class destroyer (Flight I) is exactly 505 feet.",
+        520: "The historic Blackpool Tower in England stands at an architectural height of exactly 518 feet.",
+        530: "The massive Vehicle Assembly Building (VAB) at NASA's Kennedy Space Center is exactly 525 feet tall.",
+        540: "The length of the RMS Carpathia, the famous ship that rescued Titanic survivors, was exactly 540 feet.",
+        550: "The towering High Roller Ferris wheel in Las Vegas stands at exactly 550 feet tall.",
+        560: "The Washington Monument in Washington D.C. stands at an iconic height of exactly 555 feet.",
+        570: "The San Jacinto Monument in Texas, the tallest masonry column in the world, is exactly 567 feet tall.",
+        580: "The historic USS Texas (BB-35) battleship, launched in 1912, is exactly 573 feet long.",
+        590: "The world's largest private mega-yacht, the Azzam, is exactly 590 feet long.",
+        600: "The Statue of Unity in India, the world's tallest statue, measures exactly 597 feet tall.",
+        610: "The length of the US Navy's advanced stealth Zumwalt-class destroyer is exactly 610 feet.",
+        620: "The BT Tower in London stands at an architectural height of exactly 620 feet.",
+        630: "The iconic Gateway Arch in St. Louis, Missouri, is exactly 630 feet tall.",
+        640: "The height of the prominent Torre Colpatria building in Bogota, Colombia is exactly 643 feet.",
+        650: "The massive New Bullards Bar Dam in California stands at a height of exactly 645 feet.",
+        660: "A standard city block in Salt Lake City, Utah, is exactly 660 feet long.",
+        670: "The World War II heavy cruiser USS Baltimore (CA-68) was exactly 673 feet long.",
+        680: "The world-famous Marina Bay Sands hotel towers in Singapore stand exactly 679 feet tall.",
+        690: "The length of the Royal Navy's Invincible-class aircraft carriers was exactly 689 feet.",
+        700: "The length of the SS Andrea Doria, the famous Italian ocean liner, was exactly 697 feet.",
+        710: "The massive Glen Canyon Dam on the Colorado River stands exactly 710 feet high above bedrock.",
+        720: "The length of the US Navy's Des Moines-class heavy cruisers was exactly 716 feet.",
+        730: "The Hoover Dam on the border of Nevada and Arizona stands exactly 726 feet tall.",
+        740: "The length of the legendary Indian Navy aircraft carrier INS Viraat was exactly 744 feet.",
+        750: "The length of the Japanese World War II aircraft carrier Hiryu was exactly 746 feet.",
+        760: "The length of the Spanish Navy's flagship amphibious assault ship, Juan Carlos I, is exactly 757 feet.",
+        770: "The massive World War II German battleship Scharnhorst was exactly 771 feet long.",
+        780: "The height of the famous 555 California Street skyscraper in San Francisco is exactly 779 feet.",
+        790: "The length of the historic British ocean liner RMS Lusitania was exactly 787 feet.",
+        800: "The length of the modern Italian Navy flagship aircraft carrier Cavour is exactly 800 feet."
+    };
+
     const currentSetData = questionSets[activeSet] || questionSets[1];
     const baseQuestions = currentSetData.questions;
 
     const skyStages = ['#7dd3fc', '#38bdf8', '#475569', '#1e293b', '#000000'];
 
     let currentQ = 0;
-    let totalScore = 0; // Kept internally for exact backend calculations & percentile curve
+    let totalScore = 0; 
     let currentHeight = 0; 
     let bgOffsetY = 0; 
     let currentQuestionData = {};
@@ -629,6 +741,7 @@
     const targetContainer = document.getElementById('target-container');
     const targetImg = document.getElementById('target-img');
     const reticleImg = document.getElementById('reticle-img');
+    const funFactBox = document.getElementById('fun-fact-box');
 
     // Sound elements
     const bgMusic = document.getElementById('bg-music');
@@ -665,6 +778,7 @@
         activeScreen.classList.remove('hidden');
         sprite.src = 'climber_stand.png';
         sprite.className = 'standing';
+        funFactBox.classList.remove('visible');
         startQuestion();
     });
 
@@ -678,6 +792,7 @@
     });
 
     function nextQuestion() {
+        funFactBox.classList.remove('visible');
         if (currentQ >= 7) {
             endGame();
         } else {
@@ -777,12 +892,12 @@
 
         gameContainer.style.boxShadow = `0 0 50px 10px ${glowColor}, 0 10px 25px rgba(0,0,0,0.8)`;
 
-        // Custom Percentillion Animation Sequence (diff === 0 and manual guess)
+        // Custom Percentillion Animation Sequence
         if (diff === 0 && isManual) {
             animImg.src = 'percentillion_ready.png';
             animImg.classList.remove('hidden');
             animImg.style.opacity = '0';
-            animImg.offsetHeight; // force reflow
+            animImg.offsetHeight;
             animImg.style.opacity = '1';
 
             setTimeout(() => {
@@ -825,7 +940,7 @@
             }, 1000);
         }
 
-        // Custom Green Answer Animation Sequence (diff 1-10 and manual guess)
+        // Custom Green Answer Animation Sequence
         if (diff >= 1 && diff <= 10 && isManual) {
             targetImg.src = 'target.png';
             reticleImg.classList.add('hidden');
@@ -859,7 +974,7 @@
             }, 1550);
         }
 
-        // Custom Yellow Answer Animation Sequence (diff 11-20 and manual guess)
+        // Custom Yellow Answer Animation Sequence
         if (diff >= 11 && diff <= 20 && isManual) {
             const soCloseBanner = document.createElement('div');
             soCloseBanner.id = 'soclose-banner';
@@ -889,7 +1004,7 @@
             }, 2500);
         }
 
-        // Custom Orange Answer Animation Sequence (diff 21-30 and manual guess)
+        // Custom Orange Answer Animation Sequence
         if (diff >= 21 && diff <= 30 && isManual) {
             const aLittleOffBanner = document.createElement('div');
             aLittleOffBanner.id = 'alittleoff-banner';
@@ -907,7 +1022,7 @@
             }, 2500);
         }
 
-        // Custom Red Answer Animation Sequence (diff > 30 and manual guess)
+        // Custom Red Answer Animation Sequence
         if (diff > 30 && isManual) {
             const aWaysAwayBanner = document.createElement('div');
             aWaysAwayBanner.id = 'awaysaway-banner';
@@ -957,15 +1072,23 @@
         feedbackArea.innerHTML = `<span>${!isManual ? 'Time expired! Auto-locked. ' : ''}Off by ${diff}% <br><strong>Climbed ${feetClimbed} feet</strong></span>`;
         history.push(`<p><strong>Q${currentQ + 1}:</strong> Actual ${actual}% | Guessed ${guess}% <span class="${colorClass}">(+${feetClimbed} ft)</span></p>`);
         
+        // After animation completes (4 seconds), display the fun fact above the climber
         setTimeout(() => {
             sprite.className = 'climbing-idle';
             gameContainer.style.boxShadow = `0 10px 25px rgba(0,0,0,0.8)`;
+            
+            // Calculate nearest 10-foot increment for the fun fact lookup
+            let roundedMilestone = Math.min(800, Math.max(10, Math.round(currentHeight / 10) * 10));
+            funFactBox.innerText = funFacts[roundedMilestone] || "Reaching new heights with every step!";
+            funFactBox.classList.add('visible');
+
             submitBtn.innerText = currentQ === 7 ? "Review Answers" : "Next Question";
             submitBtn.disabled = false;
         }, 4000); 
     }
 
     function endGame() {
+        funFactBox.classList.remove('visible');
         activeScreen.classList.add('hidden');
         resultScreen.classList.remove('hidden');
         gameContainer.style.backgroundColor = '#1e293b'; 
