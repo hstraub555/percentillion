@@ -287,34 +287,34 @@
     <div id="ready-screen" class="screen-content">
         <h2>Ready to Climb?</h2>
         <p style="color: #94a3b8; margin-bottom: 30px;">7 Questions + 1 Bonus. 15 Seconds each. Closer guesses to the real percentage scale the building faster.</p>
-            <button id="start-run-btn" style="width: 100%;">Begin Climb</button>
-            <!-- The ID "animated-climber" lets our script find this specific image -->
-    <img 
-        id="animated-climber"
-        src="climber_stand.png" 
-        alt="Climber Animation" 
-        style="width: 450px; height: auto; margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5)); transform: translateX(0px);"
-    >
+        <button id="start-run-btn" style="width: 100%;">Begin Climb</button>
+        
+        <!-- Animated Climber (Alternates between stand and point) -->
+        <img 
+            id="animated-climber"
+            src="climber_stand.png" 
+            alt="Climber Animation" 
+            style="width: 450px; height: auto; margin-top: 15px; margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5)); transform: translateX(0px);"
+        >
 
-    <script>
-        // Wait until the page is fully loaded before starting the animation
-        window.addEventListener('load', function() {
-            const climberImg = document.getElementById('animated-climber');
-            let currentImage = 'stand'; // Keep track of which image is showing
+        <script>
+            window.addEventListener('load', function() {
+                const climberImg = document.getElementById('animated-climber');
+                let currentImage = 'stand';
 
-            setInterval(() => {
-            if (currentImage === 'stand') {
-                climberImg.src = 'climber_point.png';
-                climberImg.style.transform = 'translateX(-2px)'; // Shifts only the pointing pose left
-                currentImage = 'point';
-            } else {
-                climberImg.src = 'climber_stand.png';
-                climberImg.style.transform = 'translateX(0px)';  // Resets the standing pose to center
-                currentImage = 'stand';
-            }
-        }, 750);
-        });
-    </script>
+                setInterval(() => {
+                    if (currentImage === 'stand') {
+                        climberImg.src = 'climber_point.png';
+                        climberImg.style.transform = 'translateX(-2px)';
+                        currentImage = 'point';
+                    } else {
+                        climberImg.src = 'climber_stand.png';
+                        climberImg.style.transform = 'translateX(0px)';
+                        currentImage = 'stand';
+                    }
+                }, 750);
+            });
+        </script>
     </div>
 
     <div id="active-screen" class="hidden" style="flex-grow: 1; display: flex; flex-direction: column;">
@@ -390,7 +390,7 @@
     // ==========================================
     // VISIT LINE 360 TO CHANGE SETS
     // ==========================================
-    const activeSet = 2;
+    const activeSet = 3;
 
     const questionSets = {
         1: {
@@ -415,6 +415,18 @@
                 { text: "What percent of our solar system's total mass is contained purely within the Sun?", answer: 99 },
                 { text: "What percent of a lightning bolt's total energy is converted into visible light?", answer: 1 },
                 { text: "What percent of dictionary words in English are estimated to come from French origins?", answer: 30 }
+            ]
+        },
+        3: {
+            difficultyCurve: 0.94,
+            questions: [
+                { text: "What percentage of the observable universe is composed of ordinary (baryonic) matter?", answer: 5 },
+                { text: "What percent of vinyl record sales are purchased by consumers under the age of 25?", answer: 50 },
+                { text: "What percentage of adult human DNA does not code for protein sequences (non-coding DNA)?", answer: 98 },
+                { text: "What percent of Canada's total land area is covered by forests?", answer: 38 },
+                { text: "What percent of energy in a standard incandescent light bulb is actually converted into visible light?", answer: 10 },
+                { text: "What percentage of smartphone users worldwide use Android operating systems?", answer: 71 },
+                { text: "What percent of an adult human's brain is composed of water?", answer: 73 }
             ]
         }
     };
