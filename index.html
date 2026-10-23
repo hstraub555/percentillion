@@ -429,13 +429,13 @@
         3: {
             difficultyCurve: 0.98,
             questions: [
-                { text: "What percent of a dollar is a single dime worth?", answer: 10 },
-                { text: "If you eat half of a whole pizza, what percentage of the pizza is gone?", answer: 50 },
-                { text: "If you flip a coin, what percent chance do you have of getting Heads?", answer: 50 },
-                { text: "What percentage of the four seasons in a year is winter?", answer: 25 },
-                { text: "If 3 out of 10 marbles are blue, what percent of the marbles are blue?", answer: 30 },
-                { text: "What percentage of the fingers and thumbs on one human hand are thumbs?", answer: 20 },
-                { text: "If you have 4 quarters, what percentage of a dollar do you have?", answer: 100 }
+                { text: "What percentage of all the gold ever mined in human history is still locked away in jewelry and bars today?", answer: 85 },
+                { text: "What percentage of all living animals on planet Earth are insects?", answer: 80 },
+                { text: "What percentage of the Sahara Desert is actually covered in sand dunes instead of rocky ground?", answer: 15 },
+                { text: "What percentage of all the water on Earth is drinkable fresh water?", answer: 3 },
+                { text: "What percentage of a wild adult tiger's diet is made up of meat?", answer: 100 },
+                { text: "What percentage of all books ever published in the world are written in English?", answer: 28 },
+                { text: "What percentage of an adult human's bones are located entirely in the hands and feet?", answer: 50 }
             ]
         }
     };
@@ -451,7 +451,7 @@
     let bgOffsetY = 0; 
     let currentQuestionData = {};
     
-    let timeLeft = 20; // 20 seconds per question
+    let timeLeft = 20; 
     let timerInterval;
     let roundActive = true;
     let history = [];
@@ -543,7 +543,7 @@
         }
         
         roundActive = true;
-        timeLeft = 20; // Reset timer to 20 seconds
+        timeLeft = 20; 
         slider.value = 50;
         guessValue.innerHTML = '50%';
         slider.disabled = false;
