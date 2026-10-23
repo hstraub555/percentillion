@@ -280,15 +280,15 @@
             animation: floatUpWave 2.5s ease-in-out forwards;
         }
 
-        /* Sliding Climber Animation (45-degree angle from top-left) */
-        @keyframes slideIn45 {
-            0% { transform: translate(-200px, -200px); opacity: 0; }
+        /* Sliding Climber Animation (45-degree angle from bottom-left to top-right with 30deg rotation) */
+        @keyframes slideIn45Up {
+            0% { transform: translate(-200px, 200px) rotate(30deg); opacity: 0; }
             60% { opacity: 1; }
-            100% { transform: translate(0px, 0px); opacity: 1; }
+            100% { transform: translate(0px, 0px) rotate(30deg); opacity: 1; }
         }
         .sliding-climber {
             position: absolute; left: 30px; top: 40%; width: 140px; height: auto; z-index: 115; pointer-events: none;
-            animation: slideIn45 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            animation: slideIn45Up 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
         .confetti {
