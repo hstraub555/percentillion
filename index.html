@@ -194,6 +194,21 @@
             animation: flashBannerBlue 2s ease-in-out forwards; pointer-events: none; white-space: nowrap;
         }
 
+        @keyframes flashBannerGreen {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            20% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+            40% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            80% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
+        }
+        #accurate-banner {
+            position: absolute; top: 40%; left: 57%; transform: translate(-50%, -50%);
+            background: rgba(15, 23, 42, 0.95); border: 3px solid #4ade80; color: #4ade80;
+            padding: 12px 24px; font-size: 1.5rem; font-weight: 900; letter-spacing: 2px;
+            border-radius: 12px; box-shadow: 0 0 30px #4ade80; z-index: 100;
+            animation: flashBannerGreen 2s ease-in-out forwards; pointer-events: none; white-space: nowrap;
+        }
+
         /* Screen Flashes */
         #screen-flash {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
@@ -737,17 +752,22 @@
             reticleImg.classList.remove('reticle-anim');
             targetContainer.classList.remove('hidden');
 
-            // Trigger reticle bounce in after target appears
             setTimeout(() => {
                 reticleImg.classList.remove('hidden');
                 reticleImg.classList.add('reticle-anim');
             }, 50);
 
-            // At 1.5s, reticle lands on target: screen flashes yellow (.2s), target switches to target_arrow
+            // At 1.5s, reticle lands on target: screen flashes yellow (.2s), target switches to target_arrow, show Dead Accurate! banner
             setTimeout(() => {
                 screenFlash.classList.add('flashing-yellow');
                 reticleImg.classList.add('hidden');
                 targetImg.src = 'target_arrow.png';
+
+                // Show Dead Accurate! Banner
+                const accurateBanner = document.createElement('div');
+                accurateBanner.id = 'accurate-banner';
+                accurateBanner.innerText = 'Dead Accurate!';
+                activeScreen.appendChild(accurateBanner);
 
                 setTimeout(() => {
                     screenFlash.classList.remove('flashing-yellow');
@@ -756,6 +776,7 @@
                 // Remains for 1 second, then disappears
                 setTimeout(() => {
                     targetContainer.classList.add('hidden');
+                    accurateBanner.remove();
                 }, 1000);
 
             }, 1550);
