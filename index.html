@@ -225,7 +225,11 @@
         #question-text { font-size: 1.2rem; min-height: 50px; margin: 0; }
         
         input[type=range] { 
-            width: 90%; margin: 15px 0; cursor: pointer; accent-color: #38bdf8;
+            width: 95%; 
+            height: 12px; /* Increased height */
+            margin: 20px 0; 
+            cursor: pointer; 
+            accent-color: #38bdf8;
             filter: drop-shadow(0 0 2px rgba(0,0,0,1));
         }
         
@@ -286,7 +290,7 @@
     
     <div id="ready-screen" class="screen-content">
         <h2>Ready to Climb?</h2>
-        <p style="color: #94a3b8; margin-bottom: 30px;">7 Questions + 1 Bonus. 15 Seconds each. Closer guesses to the real percentage scale the building faster.</p>
+        <p style="color: #94a3b8; margin-bottom: 20px;">7 Questions + 1 Bonus. 15 Seconds each. Closer guesses to the real percentage scale the building faster.</p>
         <button id="start-run-btn" style="width: 100%;">Begin Climb</button>
         
         <!-- Animated Climber (Alternates between stand and point) -->
@@ -294,8 +298,13 @@
             id="animated-climber"
             src="climber_stand.png" 
             alt="Climber Animation" 
-            style="width: 450px; height: auto; margin-top: 15px; margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5)); transform: translateX(0px);"
+            style="width: 450px; height: auto; margin-top: 15px; margin-bottom: 5px; filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5)); transform: translateX(0px);"
         >
+
+        <!-- New Centered Instructions Text -->
+        <div style="font-size: 0.8rem; color: #94a3b8; text-align: center; margin-top: 5px; line-height: 1.3;">
+            Refresh the page if the questions appear the same as yesterday's Percentillion.
+        </div>
 
         <script>
             window.addEventListener('load', function() {
