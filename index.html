@@ -280,15 +280,15 @@
             animation: floatUpWave 2.5s ease-in-out forwards;
         }
 
-        /* Sliding Climber Animation (Halved travel distance: 60px offset) */
-        @keyframes slideInShorter {
-            0% { transform: translate(-60px, 60px) rotate(30deg); opacity: 0; }
+        /* Sliding Climber Animation (Starts off-screen bottom-left, hangs off partially) */
+        @keyframes slideInPartialOff {
+            0% { transform: translate(-100px, 100px) rotate(30deg); opacity: 0; }
             60% { opacity: 1; }
             100% { transform: translate(0px, 0px) rotate(30deg); opacity: 1; }
         }
         .sliding-climber {
-            position: absolute; left: 60px; top: 35%; width: 175px; height: auto; z-index: 115; pointer-events: none;
-            animation: slideInShorter 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            position: absolute; left: -25px; top: 48%; width: 175px; height: auto; z-index: 115; pointer-events: none;
+            animation: slideInPartialOff 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
         .confetti {
