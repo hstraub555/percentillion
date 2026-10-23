@@ -617,11 +617,11 @@
             colorClass = 'color-yellow';
             glowColor = 'rgba(250, 204, 21, 0.9)';
             // Play ding twice in succession
-            soundDing.currentTime = 0;
-            soundDing.play().catch(e => {});
+            soundClap.currentTime = 0;
+            soundClap.play().catch(e => {});
             setTimeout(() => {
-                soundDing.currentTime = 0;
-                soundDing.play().catch(e => {});
+                soundClap.currentTime = 0;
+                soundClap.play().catch(e => {});
             }, 300);
         } else if (diff >= 21 && diff <= 30) {
             colorClass = 'color-orange';
