@@ -194,18 +194,33 @@
             animation: flashBannerBlue 2s ease-in-out forwards; pointer-events: none; white-space: nowrap;
         }
 
-        /* Screen Flash for Percentillion */
+        /* Screen Flashes */
         #screen-flash {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #38bdf8; opacity: 0; z-index: 120; pointer-events: none;
+            opacity: 0; z-index: 120; pointer-events: none;
         }
-        @keyframes screenFlashAnim {
-            0% { opacity: 0; }
-            50% { opacity: 0.75; }
-            100% { opacity: 0; }
+        @keyframes screenFlashBlue {
+            0% { opacity: 0; background-color: #38bdf8; }
+            50% { opacity: 0.75; background-color: #38bdf8; }
+            100% { opacity: 0; background-color: #38bdf8; }
         }
-        .flashing {
-            animation: screenFlashAnim 0.2s ease-in-out forwards;
+        @keyframes screenFlashYellow {
+            0% { opacity: 0; background-color: #facc15; }
+            50% { opacity: 0.75; background-color: #facc15; }
+            100% { opacity: 0; background-color: #facc15; }
+        }
+        .flashing-blue { animation: screenFlashBlue 0.2s ease-in-out forwards; }
+        .flashing-yellow { animation: screenFlashYellow 0.2s ease-in-out forwards; }
+
+        /* Reticle Path Animation for Green Answers */
+        @keyframes reticlePath {
+            0% { transform: translate(250px, -80px) scale(1.5) rotate(45deg); opacity: 0; }
+            30% { transform: translate(100px, 40px) scale(1.2) rotate(15deg); opacity: 1; }
+            70% { transform: translate(30px, -30px) scale(1.05) rotate(-10deg); opacity: 1; }
+            100% { transform: translate(0px, 0px) scale(1) rotate(0deg); opacity: 1; }
+        }
+        .reticle-anim {
+            animation: reticlePath 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
         .confetti {
@@ -378,6 +393,12 @@
         <!-- Percentillion Animation Image Element -->
         <img id="percentillion-anim-img" class="hidden" src="percentillion_ready.png" alt="Percentillion Anim" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 182px; height: auto; z-index: 110; opacity: 0; transition: opacity 1s ease-in-out;">
 
+        <!-- Green Answer Animation Elements (Target & Reticle container centered on the left) -->
+        <div id="target-container" class="hidden" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); width: 140px; height: 140px; z-index: 115; pointer-events: none;">
+            <img id="target-img" src="target.png" alt="Target" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%;">
+            <img id="reticle-img" src="reticle.png" alt="Reticle" class="hidden" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%;">
+        </div>
+
         <div id="ui-top" class="ui-layer">
             <div class="header-stats">
                 <span id="q-counter">Q: 1/8</span>
@@ -510,6 +531,9 @@
     const finalPercentileDisplay = document.getElementById('final-percentile-display');
     const animImg = document.getElementById('percentillion-anim-img');
     const screenFlash = document.getElementById('screen-flash');
+    const targetContainer = document.getElementById('target-container');
+    const targetImg = document.getElementById('target-img');
+    const reticleImg = document.getElementById('reticle-img');
 
     // Sound elements
     const bgMusic = document.getElementById('bg-music');
@@ -534,7 +558,7 @@
                 window.removeEventListener('keydown', unlockAudio);
             };
             window.addEventListener('click', unlockAudio);
-            window.addEventListener('keydown', unlockAudio);
+            window.removeEventListener('keydown', unlockAudio);
         });
     });
 
@@ -660,25 +684,21 @@
 
         // Custom Percentillion Animation Sequence (diff === 0 and manual guess)
         if (diff === 0 && isManual) {
-            // 1. Fade in percentillion_ready on the left side (~1 sec)
             animImg.src = 'percentillion_ready.png';
             animImg.classList.remove('hidden');
             animImg.style.opacity = '0';
             animImg.offsetHeight; // force reflow
             animImg.style.opacity = '1';
 
-            // 2. After 1s, flash screen light blue (.2 sec) and swap to percentillion_swing concurrently with banner
             setTimeout(() => {
-                screenFlash.classList.add('flashing');
+                screenFlash.classList.add('flashing-blue');
                 animImg.src = 'percentillion_swing.png';
 
-                // Show PERCENTILLION! Banner
                 const flashBanner = document.createElement('div');
                 flashBanner.id = 'flash-banner';
                 flashBanner.innerText = 'PERCENTILLION!';
                 activeScreen.appendChild(flashBanner);
 
-                // Confetti
                 for (let i = 0; i < 50; i++) {
                     const confetti = document.createElement('div');
                     confetti.className = 'confetti';
@@ -694,22 +714,51 @@
                     setTimeout(() => confetti.remove(), 1500);
                 }
 
-                // Remove flash class after 0.2s
                 setTimeout(() => {
-                    screenFlash.classList.remove('flashing');
+                    screenFlash.classList.remove('flashing-blue');
                 }, 200);
 
-                // 3. Display both for 1 sec, then disappear together
                 setTimeout(() => {
                     animImg.style.opacity = '0';
                     flashBanner.remove();
                     setTimeout(() => {
                         animImg.classList.add('hidden');
-                        animImg.style.opacity = '1'; // reset opacity for future runs
+                        animImg.style.opacity = '1';
                     }, 1000);
-                }, 1000); // 1 sec display duration
+                }, 1000);
 
-            }, 1000); // Wait 1s for ready image fade-in
+            }, 1000);
+        }
+
+        // Custom Green Answer Animation Sequence (diff 1-10 and manual guess)
+        if (diff >= 1 && diff <= 10 && isManual) {
+            targetImg.src = 'target.png';
+            reticleImg.classList.add('hidden');
+            reticleImg.classList.remove('reticle-anim');
+            targetContainer.classList.remove('hidden');
+
+            // Trigger reticle bounce in after target appears
+            setTimeout(() => {
+                reticleImg.classList.remove('hidden');
+                reticleImg.classList.add('reticle-anim');
+            }, 50);
+
+            // At 1.5s, reticle lands on target: screen flashes yellow (.2s), target switches to target_arrow
+            setTimeout(() => {
+                screenFlash.classList.add('flashing-yellow');
+                reticleImg.classList.add('hidden');
+                targetImg.src = 'target_arrow.png';
+
+                setTimeout(() => {
+                    screenFlash.classList.remove('flashing-yellow');
+                }, 200);
+
+                // Remains for 1 second, then disappears
+                setTimeout(() => {
+                    targetContainer.classList.add('hidden');
+                }, 1000);
+
+            }, 1550);
         }
 
         let rawScore = 1000 * Math.exp(-0.035 * diff);
