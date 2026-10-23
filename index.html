@@ -239,6 +239,21 @@
             animation: flashBannerOrange 2.5s ease-in-out forwards; pointer-events: none; white-space: nowrap;
         }
 
+        @keyframes flashBannerRed {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            20% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+            40% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            80% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
+        }
+        #awaysaway-banner {
+            position: absolute; top: 40%; left: 57%; transform: translate(-50%, -50%);
+            background: rgba(15, 23, 42, 0.95); border: 3px solid #f87171; color: #f87171;
+            padding: 12px 24px; font-size: 1.5rem; font-weight: 900; letter-spacing: 2px;
+            border-radius: 12px; box-shadow: 0 0 30px #f87171; z-index: 100;
+            animation: flashBannerRed 2.5s ease-in-out forwards; pointer-events: none; white-space: nowrap;
+        }
+
         /* Screen Flashes */
         #screen-flash {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
@@ -289,6 +304,18 @@
         .sliding-climber {
             position: absolute; left: -25px; top: 48%; width: 175px; height: auto; z-index: 115; pointer-events: none;
             animation: slideInPartialOff 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        /* Falling Climber Animation (Top to bottom straight line with clockwise spin) */
+        @keyframes fallStraightDown {
+            0% { transform: translate(-50%, -150px) rotate(0deg); opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translate(-50%, 700px) rotate(360deg); opacity: 0; }
+        }
+        .falling-climber {
+            position: absolute; left: 50%; top: 0; width: 175px; height: auto; z-index: 115; pointer-events: none;
+            animation: fallStraightDown 1.5s linear forwards;
         }
 
         .confetti {
@@ -874,10 +901,27 @@
             slidingClimber.className = 'sliding-climber';
             activeScreen.appendChild(slidingClimber);
 
-            // Total 2.5s duration: 1.5s sliding + 1.0s resting
             setTimeout(() => {
                 slidingClimber.remove();
                 aLittleOffBanner.remove();
+            }, 2500);
+        }
+
+        // Custom Red Answer Animation Sequence (diff > 30 and manual guess)
+        if (diff > 30 && isManual) {
+            const aWaysAwayBanner = document.createElement('div');
+            aWaysAwayBanner.id = 'awaysaway-banner';
+            aWaysAwayBanner.innerText = 'A Ways Away...';
+            activeScreen.appendChild(aWaysAwayBanner);
+
+            const fallingClimber = document.createElement('img');
+            fallingClimber.src = 'climber_fall.png';
+            fallingClimber.className = 'falling-climber';
+            activeScreen.appendChild(fallingClimber);
+
+            setTimeout(() => {
+                fallingClimber.remove();
+                aWaysAwayBanner.remove();
             }, 2500);
         }
 
