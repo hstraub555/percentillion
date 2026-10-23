@@ -261,6 +261,7 @@
         .color-blue { color: #38bdf8 !important; }
         .color-green { color: #4ade80 !important; }
         .color-yellow { color: #facc15 !important; }
+        .color-orange { color: #fb923c !important; }
         .color-red { color: #f87171 !important; }
 
         .bell-curve-wrapper {
@@ -290,9 +291,9 @@
 <!-- Audio Elements -->
 <audio id="bg-music" src="bg_music.mp3" loop></audio>
 <audio id="sound-ding" src="ding.mp3"></audio>
-<audio id="sound-clap" src="clap.mp3"></audio>
 <audio id="sound-mumble" src="mumble.mp3"></audio>
 <audio id="sound-lightning" src="lightning.mp3"></audio>
+<audio id="sound-trumpet" src="trumpet.mp3"></audio>
 
 <div id="game-container">
     <h1>Percentillion</h1>
@@ -492,14 +493,15 @@
     // Sound elements
     const bgMusic = document.getElementById('bg-music');
     const soundDing = document.getElementById('sound-ding');
-    const soundClap = document.getElementById('sound-clap');
     const soundMumble = document.getElementById('sound-mumble');
     const soundLightning = document.getElementById('sound-lightning');
+    const soundTrumpet = document.getElementById('sound-trumpet');
 
     bgMusic.volume = 0.4;
-    soundClap.volume = 0.65;      
+    soundDing.volume = 0.65;      
     soundMumble.volume = 0.65;    
     soundLightning.volume = 0.7;
+    soundTrumpet.volume = 0.65;
 
     // Start music immediately upon entering website (with fallback click-to-play listener for browser blocks)
     window.addEventListener('load', () => {
@@ -606,16 +608,31 @@
             colorClass = 'color-blue';
             glowColor = 'rgba(56, 189, 248, 0.9)';
             soundLightning.play().catch(e => {});
-        } else if (diff >= 26) {
-            colorClass = 'color-red';
-            glowColor = 'rgba(248, 113, 113, 0.9)';
-            soundMumble.play().catch(e => {});
-        } else if (diff >= 11) {
+        } else if (diff >= 1 && diff <= 10) {
+            colorClass = 'color-green';
+            glowColor = 'rgba(74, 222, 128, 0.9)';
+            soundDing.currentTime = 0;
+            soundDing.play().catch(e => {});
+        } else if (diff >= 11 && diff <= 20) {
             colorClass = 'color-yellow';
             glowColor = 'rgba(250, 204, 21, 0.9)';
-            soundClap.play().catch(e => {});
-        } else {
+            // Play ding twice in succession
+            soundDing.currentTime = 0;
             soundDing.play().catch(e => {});
+            setTimeout(() => {
+                soundDing.currentTime = 0;
+                soundDing.play().catch(e => {});
+            }, 300);
+        } else if (diff >= 21 && diff <= 30) {
+            colorClass = 'color-orange';
+            glowColor = 'rgba(251, 146, 60, 0.9)';
+            soundMumble.currentTime = 0;
+            soundMumble.play().catch(e => {});
+        } else {
+            colorClass = 'color-red';
+            glowColor = 'rgba(248, 113, 113, 0.9)';
+            soundTrumpet.currentTime = 0;
+            soundTrumpet.play().catch(e => {});
         }
 
         gameContainer.style.boxShadow = `0 0 50px 10px ${glowColor}, 0 10px 25px rgba(0,0,0,0.8)`;
@@ -665,9 +682,9 @@
         let actualSpanClass = colorClass;
         if (diff === 0 && isManual) {
             actualSpanClass += ' pop-effect-blue';
-        } else if (diff <= 10 && isManual) {
+        } else if (diff >= 1 && diff <= 10 && isManual) {
             actualSpanClass += ' pop-effect';
-        } else if (diff >= 26) {
+        } else if (diff > 30) {
             actualSpanClass += ' shake-effect';
         }
 
