@@ -1,4 +1,4 @@
-<!-- Visit Line 360 to change sets -->
+<!-- Visit Line 374 to change sets -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -341,9 +341,9 @@
         /* Fun Fact Popup Box above Climber Sprite */
         #fun-fact-box {
             position: absolute;
-            top: calc(50% - 160px);
+            top: 43%; 
             left: 50%;
-            transform: translate(-50%, 67%);
+            transform: translate(-50%, -50%);
             background: rgba(15, 23, 42, 0.95);
             border: 2px solid #38bdf8;
             color: #f8fafc;
@@ -386,7 +386,11 @@
             backdrop-filter: blur(4px); margin: 20px; padding: 20px; border-radius: 12px;
             border: 1px solid rgba(51, 65, 85, 0.5); text-shadow: 0px 1px 3px rgba(0,0,0,0.8);
         }
-        #ui-bottom { margin-top: auto; }
+        #ui-bottom { 
+            margin-top: auto; 
+            padding: 15px 20px; 
+            margin-bottom: 15px; 
+        }
 
         h1 { 
             color: #000000; background: rgba(255, 255, 255, 0.7); display: inline-block;
@@ -404,15 +408,15 @@
         input[type=range] { 
             width: 95%; 
             height: 12px; 
-            margin: 20px 0; 
+            margin: 10px 0; 
             cursor: pointer; 
             accent-color: #38bdf8;
             filter: drop-shadow(0 0 2px rgba(0,0,0,1));
         }
         
         #guess-value { 
-            font-size: 2.2rem; font-weight: bold; color: #38bdf8; margin-bottom: 5px; 
-            min-height: 48px; text-shadow: 0px 2px 4px rgba(0,0,0,1);
+            font-size: 2.2rem; font-weight: bold; color: #38bdf8; margin-bottom: 0px; 
+            min-height: 42px; text-shadow: 0px 2px 4px rgba(0,0,0,1);
         }
         
         button { 
@@ -423,7 +427,7 @@
         button:hover { background-color: #7dd3fc; }
         button:disabled { background-color: #475569; cursor: not-allowed; }
         
-        #feedback-area { margin-top: 10px; font-size: 0.95rem; min-height: 40px; }
+        #feedback-area { margin-top: 5px; font-size: 0.95rem; min-height: 40px; }
 
         .screen-content { padding: 30px; position: relative; z-index: 20; background: #1e293b; flex-grow: 1; border-radius: 0 0 16px 16px;}
         .hidden { display: none !important; }
@@ -591,7 +595,7 @@
 
 <script>
     // ==========================================
-    // VISIT LINE 360 TO CHANGE SETS
+    // VISIT LINE 374 TO CHANGE SETS
     // ==========================================
     const activeSet = 4;
 
