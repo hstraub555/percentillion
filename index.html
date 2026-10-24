@@ -60,18 +60,38 @@
             left: 0;
             width: 100%;
             height: 100vh;
-            background-color: #166534; 
-            border-top: 15px solid #22c55e; 
+            background-color: #14532d; 
+            border-top: 8px solid #4ade80; 
             z-index: 4;
             transition: transform 4s ease-in-out;
             background-image: 
                 linear-gradient(135deg, #22c55e 25%, transparent 25%), 
                 linear-gradient(225deg, #22c55e 25%, transparent 25%),
-                linear-gradient(45deg, #22c55e 25%, transparent 25%), 
-                linear-gradient(315deg, #22c55e 25%, transparent 25%);
-            background-position: 0 0, 0 0, 10px 0, 10px 0;
-            background-size: 20px 12px;
-            background-repeat: repeat-x;
+                linear-gradient(135deg, #16a34a 25%, transparent 25%), 
+                linear-gradient(225deg, #16a34a 25%, transparent 25%),
+                linear-gradient(135deg, #15803d 25%, transparent 25%), 
+                linear-gradient(225deg, #15803d 25%, transparent 25%),
+                repeating-linear-gradient(90deg, 
+                    rgba(34, 197, 94, 0.1) 0px, rgba(34, 197, 94, 0.1) 2px, 
+                    transparent 2px, transparent 6px, 
+                    rgba(21, 128, 61, 0.2) 6px, rgba(21, 128, 61, 0.2) 9px, 
+                    transparent 9px, transparent 14px,
+                    rgba(22, 163, 74, 0.15) 14px, rgba(22, 163, 74, 0.15) 17px
+                ),
+                linear-gradient(to bottom, rgba(20, 83, 45, 0) 0%, rgba(6, 78, 59, 1) 150px);
+            background-position: 
+                0 0, 0 0, 
+                10px 8px, 10px 8px, 
+                5px 15px, 5px 15px,
+                0 0,
+                0 0;
+            background-size: 
+                20px 20px, 20px 20px, 
+                24px 24px, 24px 24px, 
+                16px 16px, 16px 16px,
+                100% 100%,
+                100% 100%;
+            background-repeat: repeat-x, repeat-x, repeat-x, repeat-x, repeat-x, repeat-x, repeat, no-repeat;
         }
 
         #celestial-container {
@@ -573,7 +593,7 @@
     // ==========================================
     // VISIT LINE 360 TO CHANGE SETS
     // ==========================================
-    const activeSet = 3;
+    const activeSet = 4;
 
     const questionSets = {
         1: {
@@ -610,6 +630,18 @@
                 { text: "What percentage of a wild adult tiger's diet is made up of meat?", answer: 100 },
                 { text: "What percentage of all books ever published in the world are written in English?", answer: 28 },
                 { text: "What percentage of an adult human's bones are located entirely in the hands and feet?", answer: 50 }
+            ]
+        },
+        4: {
+            difficultyCurve: 0.95,
+            questions: [
+                { text: "What percentage of a standard watermelon's total weight is composed of water?", answer: 92 },
+                { text: "What percentage of all humans who have ever been born throughout history are currently alive today?", answer: 7 },
+                { text: "What percentage of the Apollo 11 Saturn V rocket's total liftoff weight was purely fuel and oxidizer?", answer: 85 },
+                { text: "What percentage of modern-day music is considered rap or hip-hop?", answer: 26 },
+                { text: "What percentage of the U.S.A's Gross Domestic Product (GDP) is from the automobile industry?", answer: 5 },
+                { text: "What percentage of all active Spotify users, per month, listen to Taylor Swift?", answer: 14 },
+                { text: "What percentage of cheese in the U.S.A. is consumed by people eating at restaurants?", answer: 44 }
             ]
         }
     };
